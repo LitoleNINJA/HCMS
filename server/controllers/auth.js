@@ -1,11 +1,11 @@
-const User = require('../../models/User');
+const User = require('../models/User');
 const jwt = require('jsonwebtoken');    
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const register = async (req, res) => {
     try {
-        const { name, regno, email, phone, type, password } = req.body;
+        const { name, regno, email, phone, room, type, password } = req.body;
         const usedEmail = await User.findOne({ email });
         if (usedEmail) {
             return res.status(400).json({
@@ -25,12 +25,13 @@ const register = async (req, res) => {
             regno: regno,
             type: type,
             phone: phone,
+            room: room,
             email: email,
             password: hashedPassword
         });
         await newUser.save();
         res.status(201).json({
-            message: 'User created successfully'
+            message: 'User created successfully',
         });
     } catch (error) {
         res.status(500).json({
@@ -61,10 +62,13 @@ const login = async (req, res) => {
             expiresIn: '2h'
         });
         res.status(200).json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            regno: user.regno,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                regno: user.regno,
+                type: user.type,
+            },
             token: token
         });
     } catch (error) {
@@ -76,7 +80,7 @@ const login = async (req, res) => {
 
 const verify = async (req, res) => {
     try {
-        const token = req.headers['auth-token'];
+        const token =  req.params.token;
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         if (decoded) {
             res.status(200).json({
@@ -92,13 +96,7 @@ const verify = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        const query = req.query.search ? {
-            $or: [
-                { username: { $regex: "^" + req.query.search, $options: 'i' } },
-                { email: { $regex: "^" + req.query.search, $options: 'i' } }
-            ]
-        } : {};
-        const users = await User.find(query).find({ $ne: { _id: req.user._id } });
+        const users = await User.find();
         res.status(200).json({ users });
     } catch (error) {
         res.status(500).json({

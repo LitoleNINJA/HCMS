@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -14,6 +14,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
+    },
+    room: {
+        type: Number,
     },
     phone : {
         type: String,
@@ -32,4 +35,4 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-export const User = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);
