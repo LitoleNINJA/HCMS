@@ -44,6 +44,18 @@ const getOne = async (req, res) => {
     }
 };
 
+getByType = async (req, res) => {
+    try {
+        const type = req.params.type;
+        const complaint = await Complaint.find({ type: type }).sort({ createdAt: -1 });
+        res.status(200).json(complaint);
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
 const update = async (req, res) => {
     try {
         const complaint = await Complaint.findById(req.params.id);
@@ -70,5 +82,6 @@ module.exports = {
     create,
     getAll,
     getOne,
+    getByType,
     update
 };

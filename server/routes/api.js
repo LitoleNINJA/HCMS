@@ -15,6 +15,7 @@ const api = (app) => {
     app.post('/api/complaint', user, Complaint.create);
     app.get('/api/complaint', user, Complaint.getAll);
     app.get('/api/complaint/:id', user, Complaint.getOne);
+    app.get('/api/complaint/type/:type', user, Complaint.getByType);
     app.put('/api/complaint/:id', Complaint.update);
 
     app.get('/api/leave/:id', user, Leave.getAllLeaves);
